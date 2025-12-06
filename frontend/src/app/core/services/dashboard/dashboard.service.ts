@@ -1,9 +1,8 @@
-import { inject, Injectable, signal, WritableSignal } from '@angular/core';
+import { inject, Injectable, signal } from '@angular/core';
 import { Anomaly, Overview, TimelineEvent, TimelineEventType } from '../../../pages/dashboard/dashboard.model';
 import { environment } from '../../../../environments/environments';
 import { HttpClient } from '@angular/common/http';
 import { ToastrService } from 'ngx-toastr';
-
 
 @Injectable({ providedIn: 'root' })
 export class DashboardService {
@@ -14,12 +13,12 @@ export class DashboardService {
   toasts = signal<{ id: string; title: string; message: string; timestamp: Date }[]>([]);
 
   private eventSource: EventSource | null = null;
-
+  private reconnectTimeout: any = null;
   private baseUrl = environment.apiBase;
   private toastr: ToastrService = inject(ToastrService);
   private http: HttpClient = inject(HttpClient);
 
-    getOverview(): void {
+  getOverview(): void {
     this.http.get<Overview>(`${this.baseUrl}/stats/overview`).subscribe(o => this.overview.set(o));
   }
 
@@ -41,7 +40,7 @@ export class DashboardService {
       this.timeline.update(t => [...t, data]);
 
       if (data.type === TimelineEventType.Anomaly) {
-        this.overview.update(o => o ? { ...o, activeAnomalies: o.activeAnomalies + 1 } : null);
+        this.overview.update(o => o ? { ...o, activeAnomaliesCount: o.activeAnomaliesCount + 1 } : null);
         this.showToast('New Anomaly', `Event ${data.type} detected.`);
       }
     };
@@ -49,10 +48,18 @@ export class DashboardService {
     this.eventSource.onerror = () => {
       console.error('SSE connection error.');
       this.disconnectSSE();
+
+      // Retry connection after 3 seconds
+      this.reconnectTimeout = setTimeout(() => this.connectSSE(), 3000);
     };
   }
 
   disconnectSSE(): void {
+    if (this.reconnectTimeout) {
+      clearTimeout(this.reconnectTimeout);
+      this.reconnectTimeout = null;
+    }
+
     if (this.eventSource) {
       this.eventSource.close();
       this.eventSource = null;

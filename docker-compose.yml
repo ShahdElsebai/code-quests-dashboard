@@ -1,0 +1,34 @@
+version: '3.9'
+
+services:
+  backend:
+    build:
+      context: ./backend
+    container_name: legal-backend
+    ports:
+      - "3000:3000"
+    environment:
+      NODE_ENV: production
+      NITRO_PORT: 3000
+    restart: unless-stopped
+    networks:
+      - legalnet
+
+  frontend:
+    build:
+      context: ./frontend
+    container_name: legal-frontend
+    ports:
+      - "4200:80"
+    environment:
+      API_URL: http://backend:3000
+    depends_on:
+      - backend
+    restart: unless-stopped
+    networks:
+      - legalnet
+
+networks:
+  legalnet:
+    driver: bridge
+

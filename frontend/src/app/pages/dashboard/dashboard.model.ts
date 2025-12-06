@@ -1,8 +1,8 @@
 export interface Overview {
   totalWorkflowsToday: number;
-  averageCycleTime: number;
-  slaCompliance: number;
-  activeAnomalies: number;
+  avgCycleTimeHours: number;
+  slaCompliancePercent: number;
+  activeAnomaliesCount: number;
 }
 
 export enum TimelineEventType {
