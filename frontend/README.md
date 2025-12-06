@@ -1,59 +1,99 @@
 # Frontend
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.0.1.
+This folder contains the **frontend application** of the project, built with **Angular**.
 
-## Development server
+## Table of Contents
 
-To start a local development server, run:
+- [Project Setup](#project-setup)
+- [Scripts](#scripts)
+- [Folder Structure](#folder-structure)
+- [Technologies](#technologies)
+- [Environment Variables](#environment-variables)
+- [License](#license)
+
+---
+
+## Project Setup
+
+1. Install dependencies:
+
+```bash
+npm install
+```
+
+2. Start the development server:
 
 ```bash
 ng serve
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+3. Open the app in your browser:
 
-## Code scaffolding
-
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
-
-```bash
-ng generate component component-name
+```
+http://localhost:4200
 ```
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+---
 
-```bash
-ng generate --help
+## Scripts
+
+| Command        | Description                                   |
+|----------------|-----------------------------------------------|
+| `ng serve`     | Start the development server                  |
+| `ng build`     | Build the app for production                  |
+| `ng test`      | Run unit tests (Vitest or Karma)             |
+| `ng lint`      | Run linter                                   |
+| `ng e2e`      | Run end-to-end tests                          |
+
+---
+
+## Folder Structure
+
+```
+frontend/
+├─ src/
+│  ├─ app/                  # Angular application code
+│  ├─ assets/               # Images, icons, static files
+│  ├─ environments/         # Environment configs
+│  └─ index.html
+├─ angular.json
+├─ package.json
+└─ tsconfig.json
 ```
 
-## Building
+---
 
-To build the project run:
+## Technologies
 
-```bash
-ng build
+- Angular 21
+- TypeScript
+- RxJS / Signals
+- ECharts (for charts and heatmaps)
+- ngx-toastr (for notifications)
+- SCSS for styling
+
+---
+
+## Environment Variables
+
+The project uses environment variables located in:
+
+```
+src/environments/environment.ts
+src/environments/environment.prod.ts
 ```
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+Update `apiBase` to point to your backend API.
 
-## Running unit tests
-
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
-
-```bash
-ng test
+```ts
+export const environment = {
+  production: false,
+  apiBase: 'http://localhost:3000/api'
+};
 ```
 
-## Running end-to-end tests
+---
 
-For end-to-end (e2e) testing, run:
+## License
 
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+This project is licensed under the MIT License.
