@@ -1,0 +1,19 @@
+.dark-mode {
+  background-color: #110d2d;
+  color: #072fbe;
+}
+
+
+.chart {
+  height: 300px;
+  width: 100%;
+}
+
+
+.toast-container {
+  position: fixed;
+  bottom: 0;
+  right: 0;
+  padding: 1rem;
+  z-index: 1055;
+}

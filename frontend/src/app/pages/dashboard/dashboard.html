@@ -1,0 +1,77 @@
+<div class="w-100 p-5" [class.dark-mode]="darkMode()">
+  <!-- Top Controls -->
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+      <button class="btn btn-primary me-2" (click)="toggleDarkMode()">
+        @if (darkMode()) { Light Mode } @else { Dark Mode }
+      </button>
+      <button class="btn btn-success" (click)="toggleLiveUpdates()">
+        @if (liveUpdates()) { Pause Updates } @else { Resume Updates }
+      </button>
+    </div>
+  </div>
+
+  <!-- Overview Cards -->
+  @if (overview()) {
+    <div class="row mb-3 g-1">
+      @for (key of overviewKeys; track key) {
+        <div class="col-12 col-sm-6 col-md-3">
+          <div class="card shadow-sm d-flex flex-column align-items-center p-3 text-center">
+            <h6 class="fs-6 mb-2">{{ key | titlecase }}</h6>
+            <h3 class="fw-bold fs-4">{{ overview()![key] }}</h3>
+          </div>
+        </div>
+      }
+    </div>
+  }
+
+  <!-- Timeline Chart -->
+  <div class="card mb-2 p-3">
+    <h5>Real-Time Event Timeline</h5>
+    <div id="timelineChart" class="chart"></div>
+  </div>
+
+  <!-- Anomaly Heatmap -->
+  <div class="card  mb-2 p-3">
+    <h5>Anomaly Heatmap</h5>
+    <div id="anomalyChart" class="chart"></div>
+
+    <!-- Filter by severity -->
+    <div class="mt-1">
+      @for (s of [anomalySeverity.Low, anomalySeverity.Medium, anomalySeverity.High]; track s) {
+        <label class="me-3">
+          <input
+            type="checkbox"
+            (change)="filterAnomaliesBySeverity(s, $event.target.checked)"
+            checked
+          />
+          {{ s | titlecase }}
+        </label>
+      }
+    </div>
+  </div>
+
+  <!-- Workflow Volume Chart -->
+  <div class="card  mb-2 p-3">
+    <h5>Workflow Volume Chart</h5>
+    <div id="volumeChart" class="chart"></div>
+  </div>
+
+  <!-- Toast Notifications -->
+  <div class="toast-container">
+    @for (toast of dashboardService.toasts(); track toast.id) {
+      <div class="toast show mb-2" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="toast-header">
+          <strong class="me-auto">{{ toast.title }}</strong>
+          <small>{{ toast.timestamp | date: 'shortTime' }}</small>
+          <button
+            type="button"
+            class="btn-close"
+            (click)="dashboardService.dismissToast(toast.id)"
+          ></button>
+        </div>
+        <div class="toast-body">{{ toast.message }}</div>
+      </div>
+    }
+  </div>
+</div>

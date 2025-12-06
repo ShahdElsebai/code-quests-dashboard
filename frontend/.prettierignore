@@ -1,0 +1,7 @@
+# Prettier ignore patterns
+node_modules/
+dist/
+coverage/
+*.min.js
+*.bundle.js
+package-lock.json
