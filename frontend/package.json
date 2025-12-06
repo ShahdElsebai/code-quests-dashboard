@@ -23,18 +23,7 @@
       "prettier --write"
     ]
   },
-  "prettier": {
-    "printWidth": 100,
-    "singleQuote": true,
-    "overrides": [
-      {
-        "files": "*.html",
-        "options": {
-          "parser": "angular"
-        }
-      }
-    ]
-  },
+
   "private": true,
   "packageManager": "npm@11.6.0",
   "dependencies": {
@@ -67,6 +56,7 @@
     "@types/echarts": "^4.9.22",
     "@typescript-eslint/eslint-plugin": "^8.48.1",
     "@typescript-eslint/parser": "^8.48.1",
+    "angular-eslint": "^20.6.0",
     "eslint": "^9.39.1",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-prettier": "^5.5.4",
@@ -75,6 +65,8 @@
     "lint-staged": "^16.2.7",
     "prettier": "^3.7.4",
     "typescript": "~5.9.2",
-    "vitest": "^4.0.8"
+    "vitest": "^4.0.8",
+       "typescript-eslint": "^8.48.1"
+
   }
 }

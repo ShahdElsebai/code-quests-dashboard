@@ -8,7 +8,7 @@ export interface Overview {
 export enum TimelineEventType {
   Completed = 'completed',
   Pending = 'pending',
-  Anomaly = 'anomaly'
+  Anomaly = 'anomaly',
 }
 
 export interface TimelineEvent {
@@ -20,13 +20,13 @@ export interface TimelineEvent {
 export enum AnomalySeverity {
   Low = 'low',
   Medium = 'medium',
-  High = 'high'
+  High = 'high',
 }
 
 export enum AnomalyType {
   SLA_Breach = 'sla_breach',
   Delay = 'delay',
-  Missing_Document = 'missing_document'
+  Missing_Document = 'missing_document',
 }
 
 export interface Anomaly {

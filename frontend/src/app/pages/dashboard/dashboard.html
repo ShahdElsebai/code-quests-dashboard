@@ -3,10 +3,18 @@
   <div class="d-flex justify-content-between align-items-center mb-4">
     <div>
       <button class="btn btn-primary me-2" (click)="toggleDarkMode()">
-        @if (darkMode()) { Light Mode } @else { Dark Mode }
+        @if (darkMode()) {
+          Light Mode
+        } @else {
+          Dark Mode
+        }
       </button>
       <button class="btn btn-success" (click)="toggleLiveUpdates()">
-        @if (liveUpdates()) { Pause Updates } @else { Resume Updates }
+        @if (liveUpdates()) {
+          Pause Updates
+        } @else {
+          Resume Updates
+        }
       </button>
     </div>
   </div>
@@ -32,7 +40,7 @@
   </div>
 
   <!-- Anomaly Heatmap -->
-  <div class="card  mb-2 p-3">
+  <div class="card mb-2 p-3">
     <h5>Anomaly Heatmap</h5>
     <div id="anomalyChart" class="chart"></div>
 
@@ -40,11 +48,7 @@
     <div class="mt-1">
       @for (s of [anomalySeverity.Low, anomalySeverity.Medium, anomalySeverity.High]; track s) {
         <label class="me-3">
-          <input
-            type="checkbox"
-            (change)="filterAnomaliesBySeverity(s, $event.target.checked)"
-            checked
-          />
+          <input type="checkbox" (change)="filterAnomaliesBySeverity(s, $event.target.checked)" checked />
           {{ s | titlecase }}
         </label>
       }
@@ -52,9 +56,8 @@
   </div>
 
   <!-- Workflow Volume Chart -->
-  <div class="card  mb-2 p-3">
+  <div class="card mb-2 p-3">
     <h5>Workflow Volume Chart</h5>
     <div id="volumeChart" class="chart"></div>
   </div>
-
 </div>

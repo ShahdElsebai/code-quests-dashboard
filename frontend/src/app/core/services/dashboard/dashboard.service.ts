@@ -1,4 +1,4 @@
-import { inject, Injectable, signal } from '@angular/core';
+import { inject, Injectable, signal, WritableSignal } from '@angular/core';
 import { Anomaly, Overview, TimelineEvent, TimelineEventType } from '../../../pages/dashboard/dashboard.model';
 import { environment } from '../../../../environments/environments';
 import { HttpClient } from '@angular/common/http';
@@ -6,52 +6,57 @@ import { ToastrService } from 'ngx-toastr';
 
 @Injectable({ providedIn: 'root' })
 export class DashboardService {
-
-  overview = signal<Overview | null>(null);
-  timeline = signal<TimelineEvent[]>([]);
-  anomalies = signal<Anomaly[]>([]);
-  toasts = signal<{ id: string; title: string; message: string; timestamp: Date }[]>([]);
+  overview: WritableSignal<Overview | null> = signal<Overview | null>(null);
+  timeline: WritableSignal<TimelineEvent[]> = signal<TimelineEvent[]>([]);
+  anomalies: WritableSignal<Anomaly[]> = signal<Anomaly[]>([]);
+  toasts: WritableSignal<{ id: string; title: string; message: string; timestamp: Date }[]> = signal([]);
 
   private eventSource: EventSource | null = null;
-  private reconnectTimeout: any = null;
-  private baseUrl = environment.apiBase;
+  private reconnectTimeout: number | null = null;
+  private baseUrl: string = environment.apiBase;
   private toastr: ToastrService = inject(ToastrService);
   private http: HttpClient = inject(HttpClient);
 
   getOverview(): void {
-    this.http.get<Overview>(`${this.baseUrl}/stats/overview`).subscribe(o => this.overview.set(o));
+    this.http.get<Overview>(`${this.baseUrl}/stats/overview`).subscribe((o: Overview) => this.overview.set(o));
   }
 
   getTimeline(): void {
-    this.http.get<TimelineEvent[]>(`${this.baseUrl}/stats/timeline`).subscribe(t => this.timeline.set(t));
+    this.http
+      .get<TimelineEvent[]>(`${this.baseUrl}/stats/timeline`)
+      .subscribe((t: TimelineEvent[]) => this.timeline.set(t));
   }
 
   getAnomalies(): void {
-    this.http.get<Anomaly[]>(`${this.baseUrl}/stats/anomalies`).subscribe(a => this.anomalies.set(a));
+    this.http.get<Anomaly[]>(`${this.baseUrl}/stats/anomalies`).subscribe((a: Anomaly[]) => this.anomalies.set(a));
   }
 
   connectSSE(): void {
     if (this.eventSource) return;
 
-    this.eventSource = new EventSource(`${this.baseUrl}/events/stream`);
+    const connect: () => void = (): void => {
+      this.eventSource = new EventSource(`${this.baseUrl}/events/stream`);
 
-    this.eventSource.onmessage = (event: MessageEvent<string>) => {
-      const data: TimelineEvent = JSON.parse(event.data);
-      this.timeline.update(t => [...t, data]);
+      this.eventSource.onmessage = (event: MessageEvent<string>): void => {
+        const data: TimelineEvent = JSON.parse(event.data);
+        this.timeline.update((t: TimelineEvent[]) => [...t, data]);
 
-      if (data.type === TimelineEventType.Anomaly) {
-        this.overview.update(o => o ? { ...o, activeAnomaliesCount: o.activeAnomaliesCount + 1 } : null);
-        this.showToast('New Anomaly', `Event ${data.type} detected.`);
-      }
+        if (data.type === TimelineEventType.Anomaly) {
+          this.overview.update((o: Overview | null) =>
+            o ? { ...o, activeAnomaliesCount: o.activeAnomaliesCount + 1 } : null
+          );
+          this.showToast('New Anomaly', `Event ${data.type} detected.`);
+        }
+      };
+
+      this.eventSource.onerror = (): void => {
+        console.error('SSE connection error. Reconnecting in 2s...');
+        this.disconnectSSE();
+        setTimeout(connect, 2000); // Retry after 2 seconds
+      };
     };
 
-    this.eventSource.onerror = () => {
-      console.error('SSE connection error.');
-      this.disconnectSSE();
-
-      // Retry connection after 3 seconds
-      this.reconnectTimeout = setTimeout(() => this.connectSSE(), 3000);
-    };
+    connect();
   }
 
   disconnectSSE(): void {
@@ -67,13 +72,18 @@ export class DashboardService {
   }
 
   showToast(title: string, message: string): void {
-    const id = crypto.randomUUID();
-    const timestamp = new Date();
-    this.toasts.update(t => [...t, { id, title, message, timestamp }]);
+    const id: string = crypto.randomUUID();
+    const timestamp: Date = new Date();
+    this.toasts.update((t: { id: string; title: string; message: string; timestamp: Date }[]) => [
+      ...t,
+      { id, title, message, timestamp },
+    ]);
     this.toastr.info(message, title, { timeOut: 3000 });
   }
 
   dismissToast(id: string): void {
-    this.toasts.update(t => t.filter(toast => toast.id !== id));
+    this.toasts.update((t: { id: string; title: string; message: string; timestamp: Date }[]) =>
+      t.filter((toast: { id: string }) => toast.id !== id)
+    );
   }
 }
