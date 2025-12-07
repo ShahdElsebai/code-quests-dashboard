@@ -6,7 +6,7 @@ import * as echarts from 'echarts';
   selector: 'app-timeline-chart',
   templateUrl: './timeline-chart.component.html',
   styleUrls: ['./timeline-chart.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TimelineChartComponent implements AfterViewChecked {
   timeline: InputSignal<TimelineEvent[]> = input.required<TimelineEvent[]>();
@@ -22,10 +22,13 @@ export class TimelineChartComponent implements AfterViewChecked {
 
   updateTimelineChart(): void {
     if (!this.timelineChart) return;
-    const data: { value: [number, TimelineEventType]; itemStyle: { color: string } }[] = (this.timeline() ?? []).map((e: TimelineEvent) => ({
+    const data: { value: [number | string, TimelineEventType]; itemStyle: { color: string } }[] = (
+      this.timeline() ?? []
+    ).map((e: TimelineEvent) => ({
       value: [e.timestamp, e.type],
       itemStyle: {
-        color: e.type === TimelineEventType.Completed ? 'green' : e.type === TimelineEventType.Pending ? 'yellow' : 'red',
+        color:
+          e.type === TimelineEventType.Completed ? 'green' : e.type === TimelineEventType.Pending ? 'yellow' : 'red',
       },
     }));
     this.timelineChart.setOption({

@@ -1,64 +1,49 @@
+import { describe, it, beforeEach, expect, vi } from 'vitest';
 import { TestBed } from '@angular/core/testing';
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-
 import { DashboardService } from './dashboard.service';
-import { Anomaly, Overview, TimelineEvent, TimelineEventType, AnomalySeverity, AnomalyType } from '../../../pages/dashboard/dashboard.model';
-
-const mockOverview: Overview = {
-  totalWorkflowsToday: 10,
-  avgCycleTimeHours: 5,
-  slaCompliancePercent: 99,
-  activeAnomaliesCount: 2,
-};
-
-const mockTimeline: TimelineEvent[] = [
-  { id: 1, timestamp: Date.now(), type: TimelineEventType.Completed },
-  { id: 2, timestamp: Date.now(), type: TimelineEventType.Pending },
-];
-
-const mockAnomalies: Anomaly[] = [
-  { id: '1', timestamp: Date.now(), severity: AnomalySeverity.High, type: AnomalyType.SLA_Breach },
-  { id: '2', timestamp: Date.now(), severity: AnomalySeverity.Low, type: AnomalyType.SLA_Breach },
-];
+import { of } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
+import { ToastrService } from 'ngx-toastr';
+import { AnomalySeverity, TimelineEventType } from '../../../pages/dashboard/dashboard.model';
 
 describe('DashboardService', () => {
   let service: DashboardService;
   let httpMock: any;
   let toastrMock: any;
 
-  beforeEach(() => {
-    TestBed.configureTestingModule({});
-    httpMock = {
-      get: vi.fn().mockReturnValue({ subscribe: vi.fn(cb => cb(mockOverview)) })
-    };
-    toastrMock = { info: vi.fn() };
-    service = Object.create(DashboardService.prototype);
-    (service as any).http = httpMock;
-    (service as any).toastr = toastrMock;
-    service.overview = service.overview || (() => null);
-    service.timeline = service.timeline || (() => []);
-    service.anomalies = service.anomalies || (() => []);
-    service.toasts = service.toasts || (() => []);
-  });
+  const mockOverview = { activeAnomaliesCount: 10 };
+  const mockTimeline = [{ timestamp: Date.now(), type: TimelineEventType.Completed }];
+  const mockAnomalies = [{ id: 1, severity: AnomalySeverity.High }];
 
-  it('should be created', () => {
-    expect(service).toBeTruthy();
+  beforeEach(() => {
+    httpMock = { get: vi.fn() };
+    toastrMock = { info: vi.fn() };
+
+    TestBed.configureTestingModule({
+      providers: [
+        DashboardService,
+        { provide: HttpClient, useValue: httpMock },
+        { provide: ToastrService, useValue: toastrMock },
+      ],
+    });
+
+    service = TestBed.inject(DashboardService);
   });
 
   it('should fetch overview and set signal', () => {
-    httpMock.get.mockReturnValueOnce({ subscribe: vi.fn(cb => cb(mockOverview)) });
+    httpMock.get.mockReturnValue(of(mockOverview));
     service.getOverview();
     expect(service.overview()).toEqual(mockOverview);
   });
 
   it('should fetch timeline and set signal', () => {
-    httpMock.get.mockReturnValueOnce({ subscribe: vi.fn(cb => cb(mockTimeline)) });
+    httpMock.get.mockReturnValue(of(mockTimeline));
     service.getTimeline();
     expect(service.timeline()).toEqual(mockTimeline);
   });
 
   it('should fetch anomalies and set signal', () => {
-    httpMock.get.mockReturnValueOnce({ subscribe: vi.fn(cb => cb(mockAnomalies)) });
+    httpMock.get.mockReturnValue(of(mockAnomalies));
     service.getAnomalies();
     expect(service.anomalies()).toEqual(mockAnomalies);
   });

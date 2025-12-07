@@ -21,24 +21,16 @@
 
   <!-- Overview Cards -->
   <app-overview [overview]="overview()"></app-overview>
-    <!-- Timeline Chart -->
-    <app-timeline-chart [timeline]="timeline()"></app-timeline-chart>
+  <!-- Timeline Chart -->
+  <app-timeline-chart [timeline]="timeline()"></app-timeline-chart>
 
-    <!-- Anomaly Heatmap -->
-    <div class="card mb-2 p-3">
-      <h5>Anomaly Heatmap</h5>
-      <div id="anomalyChart" class="chart"></div>
-      <!-- Filter by severity -->
-      <div class="mt-1">
-        @for (s of [anomalySeverity.Low, anomalySeverity.Medium, anomalySeverity.High]; track s) {
-          <label class="me-3">
-          <input type="checkbox" (change)="filterAnomaliesBySeverity(s, $event.target.checked)" checked />
-             {{ s | titlecase }}
-          </label>
-        }
-      </div>
-    </div>
+  <!-- Anomaly Heatmap -->
+  <app-anomaly-heatmap
+    [anomalies]="anomalies()"
+    [activeFilters]="activeFilters"
+    (filterChange)="filterAnomaliesBySeverity($event.severity, $event.checked)"
+  ></app-anomaly-heatmap>
 
-    <!-- Workflow Volume Chart -->
-    <app-volume-chart [timeline]="timeline()"></app-volume-chart>
+  <!-- Workflow Volume Chart -->
+  <app-volume-chart [timeline]="timeline()"></app-volume-chart>
 </div>

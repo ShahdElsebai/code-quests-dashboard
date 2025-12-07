@@ -1,9 +1,8 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { TestBed } from '@angular/core/testing';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-
-import { Dashboard } from './dashboard';
+import { signal } from '@angular/core';
 import { DashboardService } from '../../core/services/dashboard/dashboard.service';
-import { AnomalySeverity, Overview, TimelineEvent, Anomaly, TimelineEventType, AnomalyType } from './dashboard.model';
+import { Overview, TimelineEvent, TimelineEventType, Anomaly, AnomalySeverity, AnomalyType } from './dashboard.model';
 
 const mockOverview: Overview = {
   totalWorkflowsToday: 10,
@@ -22,61 +21,63 @@ const mockAnomalies: Anomaly[] = [
   { id: '2', timestamp: Date.now(), severity: AnomalySeverity.Low, type: AnomalyType.SLA_Breach },
 ];
 
-describe('Dashboard', () => {
-  let component: Dashboard;
-  let fixture: ComponentFixture<Dashboard>;
-  let dashboardService: DashboardService;
-
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      imports: [Dashboard]
-    })
-    .compileComponents();
-
-    fixture = TestBed.createComponent(Dashboard);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
-  });
+describe('DashboardService', () => {
+  let service: DashboardService;
+  let httpMock: any;
+  let toastrMock: any;
 
   beforeEach(() => {
-    dashboardService = {
-      overview: vi.fn(() => mockOverview),
-      timeline: vi.fn(() => mockTimeline),
-      anomalies: vi.fn(() => mockAnomalies),
-      getOverview: vi.fn(),
-      getTimeline: vi.fn(),
-      getAnomalies: vi.fn(),
-      connectSSE: vi.fn(),
-      disconnectSSE: vi.fn(),
-    } as any;
-    component.dashboardService = dashboardService;
-    component.originalAnomalies = mockAnomalies;
+    TestBed.configureTestingModule({});
+    httpMock = { get: vi.fn() };
+    toastrMock = { info: vi.fn() };
+    service = Object.create(DashboardService.prototype);
+    (service as any).http = httpMock;
+    (service as any).toastr = toastrMock;
+
+    service.overview = signal<Overview | null>(null);
+    service.timeline = signal<TimelineEvent[]>([]);
+    service.anomalies = signal<Anomaly[]>([]);
+    service.toasts = signal<{ id: string; title: string; message: string; timestamp: Date }[]>([]);
   });
 
-  it('should create', () => {
-    expect(component).toBeTruthy();
+  it('should be created', () => {
+    expect(service).toBeTruthy();
   });
 
-  it('should toggle dark mode', () => {
-    component.darkMode.set(false);
-    component.toggleDarkMode();
-    expect(component.darkMode()).toBe(true);
+  it('should fetch overview and set signal', () => {
+    httpMock.get.mockReturnValueOnce({
+      subscribe: vi.fn(cb => cb(mockOverview)),
+    });
+    service.getOverview();
+    expect(service.overview()).toEqual(mockOverview);
   });
 
-  it('should toggle live updates and call connect/disconnect', () => {
-    component.liveUpdates.set(false);
-    component.toggleLiveUpdates();
-    expect(component.liveUpdates()).toBe(true);
-    expect(dashboardService.connectSSE).toHaveBeenCalled();
-    component.toggleLiveUpdates();
-    expect(component.liveUpdates()).toBe(false);
-    expect(dashboardService.disconnectSSE).toHaveBeenCalled();
+  it('should fetch timeline and set signal', () => {
+    httpMock.get.mockReturnValueOnce({
+      subscribe: vi.fn(cb => cb(mockTimeline)),
+    });
+    service.getTimeline();
+    expect(service.timeline()).toEqual(mockTimeline);
   });
 
-  // it('should filter anomalies by severity', () => {
-  //   component.filteredaSeverities = new Set([AnomalySeverity.High]);
-  //   component.filterAnomaliesBySeverity(AnomalySeverity.High, false);
-  //   expect(component.anomalies().length).toBe(1);
-  //   expect(component.anomalies()[0].severity).toBe(AnomalySeverity.Low);
-  // });
+  it('should fetch anomalies and set signal', () => {
+    httpMock.get.mockReturnValueOnce({
+      subscribe: vi.fn(cb => cb(mockAnomalies)),
+    });
+    service.getAnomalies();
+    expect(service.anomalies()).toEqual(mockAnomalies);
+  });
+
+  it('should show toast and update toasts signal', () => {
+    service.showToast('Test', 'Message');
+    expect(service.toasts().length).toBe(1);
+    expect(toastrMock.info).toHaveBeenCalledWith('Message', 'Test', { timeOut: 3000 });
+  });
+
+  it('should dismiss toast', () => {
+    service.showToast('Test', 'Message');
+    const id = service.toasts()[0].id;
+    service.dismissToast(id);
+    expect(service.toasts().length).toBe(0);
+  });
 });

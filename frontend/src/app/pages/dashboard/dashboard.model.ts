@@ -13,7 +13,7 @@ export enum TimelineEventType {
 
 export interface TimelineEvent {
   id: number;
-  timestamp: number;
+  timestamp: number | string;
   type: TimelineEventType;
 }
 
@@ -33,5 +33,5 @@ export interface Anomaly {
   id: string;
   type: AnomalyType;
   severity: AnomalySeverity;
-  timestamp: number;
+  timestamp: number | string;
 }

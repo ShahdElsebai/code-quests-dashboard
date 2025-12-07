@@ -1,0 +1,12 @@
+<div class="card mb-2 p-3">
+  <h5>Anomaly Heatmap</h5>
+  <div #anomalyChartContainer class="chart"></div>
+  <div class="mt-1">
+    @for (s of [anomalySeverity.Low, anomalySeverity.Medium, anomalySeverity.High]; track s) {
+      <label class="me-3">
+        <input type="checkbox" (change)="onFilterChange(s, $event.target.checked)" checked />
+        {{ s | titlecase }}
+      </label>
+    }
+  </div>
+</div>

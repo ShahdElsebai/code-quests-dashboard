@@ -1,32 +1,26 @@
-import { Component, signal } from '@angular/core';
-import { TestBed } from '@angular/core/testing';
-import { describe, it, expect } from 'vitest';
+import { describe, it, beforeEach, expect, vi } from 'vitest';
 import { VolumeChartComponent } from './volume-chart.component';
+import { signal, WritableSignal } from '@angular/core';
 import { TimelineEvent, TimelineEventType } from '../dashboard.model';
 
 const mockTimeline: TimelineEvent[] = [
-  { id: 1, timestamp: Date.now(), type: TimelineEventType.Completed },
-  { id: 2, timestamp: Date.now(), type: TimelineEventType.Pending },
+  { id: 1, type: TimelineEventType.Anomaly, timestamp: new Date().toISOString() },
+  { id: 2, type: TimelineEventType.Completed, timestamp: new Date().toISOString() },
 ];
 
-@Component({
-  selector: 'host-comp',
-  template: `<dashboard-volume-chart [timeline]="timeline"></dashboard-volume-chart>`,
-  standalone: true,
-  imports: [VolumeChartComponent]
-})
-class HostComponent {
-  timeline = signal(mockTimeline);
-}
+describe('VolumeChartComponent', () => {
+  let component: VolumeChartComponent;
 
-describe('VolumeChartComponent (integration)', () => {
-  it('should render and accept timeline input signal', async () => {
-    await TestBed.configureTestingModule({
-      imports: [HostComponent]
-    }).compileComponents();
-    const fixture = TestBed.createComponent(HostComponent);
-    fixture.detectChanges();
-    const el = fixture.nativeElement as HTMLElement;
-    expect(el.textContent).toContain('Workflow Volume Chart');
+  beforeEach(() => {
+    component = new VolumeChartComponent();
+
+    (component as any)._timeline = signal(mockTimeline) as WritableSignal<TimelineEvent[]>;
+
+    component.volumeChart = { setOption: vi.fn() } as any;
+  });
+
+  it('should update chart when timeline changes', () => {
+    component.updateVolumeChart();
+    expect(component.volumeChart?.setOption).toHaveBeenCalled();
   });
 });

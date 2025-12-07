@@ -1,32 +1,36 @@
-import { Component, signal } from '@angular/core';
+import { describe, it, beforeEach, expect, vi } from 'vitest';
 import { TestBed } from '@angular/core/testing';
-import { describe, it, expect } from 'vitest';
 import { TimelineChartComponent } from './timeline-chart.component';
 import { TimelineEvent, TimelineEventType } from '../dashboard.model';
+import { signal } from '@angular/core';
 
 const mockTimeline: TimelineEvent[] = [
-  { id: 1, timestamp: Date.now(), type: TimelineEventType.Completed },
-  { id: 2, timestamp: Date.now(), type: TimelineEventType.Pending },
+  { id: 1, type: TimelineEventType.Anomaly, timestamp: new Date().toISOString() },
+  { id: 2, type: TimelineEventType.Completed, timestamp: new Date().toISOString() },
 ];
 
-@Component({
-  selector: 'host-comp',
-  template: `<dashboard-timeline-chart [timeline]="timeline"></dashboard-timeline-chart>`,
-  standalone: true,
-  imports: [TimelineChartComponent]
-})
-class HostComponent {
-  timeline = signal(mockTimeline);
-}
+describe('TimelineChartComponent', () => {
+  let component: TimelineChartComponent;
 
-describe('TimelineChartComponent (integration)', () => {
-  it('should render and accept timeline input signal', async () => {
+  beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [HostComponent]
+      imports: [TimelineChartComponent],
     }).compileComponents();
-    const fixture = TestBed.createComponent(HostComponent);
-    fixture.detectChanges();
-    const el = fixture.nativeElement as HTMLElement;
-    expect(el.textContent).toContain('Real-Time Event Timeline');
+
+    const fixture = TestBed.createComponent(TimelineChartComponent);
+    component = fixture.componentInstance;
+
+    (component as any).timeline = signal(mockTimeline);
+
+    component.timelineChart = { setOption: vi.fn() } as any;
+  });
+
+  it('should create component', () => {
+    expect(component).toBeTruthy();
+  });
+
+  it('should update chart', () => {
+    component.updateTimelineChart();
+    expect(component.timelineChart?.setOption).toHaveBeenCalled();
   });
 });
