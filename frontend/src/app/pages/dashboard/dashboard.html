@@ -20,9 +20,9 @@
   </div>
 
   <!-- Overview Cards -->
-  <dashboard-overview [overview]="overview()"></dashboard-overview>
+  <app-overview [overview]="overview()"></app-overview>
     <!-- Timeline Chart -->
-    <dashboard-timeline-chart [timeline]="timeline()"></dashboard-timeline-chart>
+    <app-timeline-chart [timeline]="timeline()"></app-timeline-chart>
 
     <!-- Anomaly Heatmap -->
     <div class="card mb-2 p-3">
@@ -40,5 +40,5 @@
     </div>
 
     <!-- Workflow Volume Chart -->
-    <dashboard-volume-chart [timeline]="timeline()"></dashboard-volume-chart>
+    <app-volume-chart [timeline]="timeline()"></app-volume-chart>
 </div>

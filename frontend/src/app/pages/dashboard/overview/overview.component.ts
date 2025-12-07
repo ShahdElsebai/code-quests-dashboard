@@ -1,10 +1,11 @@
-import { Component, Input, signal, WritableSignal, input, InputSignal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, input, InputSignal } from '@angular/core';
 import { Overview } from '../dashboard.model';
 
 @Component({
-  selector: 'dashboard-overview',
+  selector: 'app-overview',
   templateUrl: './overview.component.html',
-  styleUrls: ['./overview.component.scss']
+  styleUrls: ['./overview.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class OverviewComponent {
   overview: InputSignal<Overview | null> = input.required<Overview | null>();

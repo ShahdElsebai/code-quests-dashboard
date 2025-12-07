@@ -1,11 +1,12 @@
-import { Component, input, AfterViewChecked, InputSignal } from '@angular/core';
+import { Component, input, AfterViewChecked, InputSignal, ChangeDetectionStrategy } from '@angular/core';
 import { TimelineEvent, TimelineEventType } from '../dashboard.model';
 import * as echarts from 'echarts';
 
 @Component({
-  selector: 'dashboard-timeline-chart',
+  selector: 'app-timeline-chart',
   templateUrl: './timeline-chart.component.html',
-  styleUrls: ['./timeline-chart.component.scss']
+  styleUrls: ['./timeline-chart.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class TimelineChartComponent implements AfterViewChecked {
   timeline: InputSignal<TimelineEvent[]> = input.required<TimelineEvent[]>();

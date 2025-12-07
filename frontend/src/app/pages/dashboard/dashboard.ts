@@ -36,7 +36,7 @@ export class Dashboard implements OnInit, OnDestroy {
 
   dashboardService: DashboardService = inject(DashboardService);
 
-  anomalySeverity = AnomalySeverity;
+  anomalySeverity: typeof AnomalySeverity = AnomalySeverity;
 
   constructor() {
     // Bind service signals to component reactively
@@ -45,7 +45,7 @@ export class Dashboard implements OnInit, OnDestroy {
       this.timeline.set(this.dashboardService.timeline());
     });
     effect(() => {
-      const data = this.dashboardService.anomalies();
+      const data: Anomaly[] = this.dashboardService.anomalies();
       this.originalAnomalies = data;
 
       if (this.activeFilters.size > 0) {
