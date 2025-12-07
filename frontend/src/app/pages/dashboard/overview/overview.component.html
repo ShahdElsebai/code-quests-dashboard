@@ -1,0 +1,12 @@
+@if (overview()) {
+  <div class="row mb-3 g-1 w-30">
+    @for (key of overviewKeys; track key) {
+      <div class="col-12 col-sm-6 col-md-3">
+        <div class="card shadow-sm d-flex flex-column align-items-center p-3 text-center">
+          <h6 class="fs-6 mb-2">{{ getOverviewKeyLabel(key) }}</h6>
+          <h3 class="fw-bold fs-4">{{ overview()![key] }}</h3>
+        </div>
+      </div>
+    }
+  </div>
+}

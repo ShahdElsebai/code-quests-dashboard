@@ -4,18 +4,20 @@ import {
   OnInit,
   OnDestroy,
   signal,
+  WritableSignal,
   effect,
   ChangeDetectionStrategy,
-  WritableSignal,
 } from '@angular/core';
-import { Anomaly, AnomalySeverity, Overview, TimelineEvent, TimelineEventType } from './dashboard.model';
+import { Anomaly, AnomalySeverity, Overview, TimelineEvent } from './dashboard.model';
 import { DashboardService } from '../../core/services/dashboard/dashboard.service';
-import * as echarts from 'echarts';
+import { OverviewComponent } from './overview/overview.component';
+import { TimelineChartComponent } from './timeline-chart/timeline-chart.component';
+import { VolumeChartComponent } from './volume-chart/volume-chart.component';
 import { TitleCasePipe } from '@angular/common';
-
+import * as echarts from 'echarts';
 @Component({
   selector: 'app-dashboard',
-  imports: [TitleCasePipe],
+  imports: [ OverviewComponent, TimelineChartComponent, VolumeChartComponent, TitleCasePipe],
   templateUrl: './dashboard.html',
   styleUrls: ['./dashboard.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -29,27 +31,18 @@ export class Dashboard implements OnInit, OnDestroy {
   originalAnomalies: Anomaly[] = [];
   activeFilters: Set<AnomalySeverity> = new Set<AnomalySeverity>();
 
-  timelineChart: echarts.ECharts | null = null;
   anomalyChart: echarts.ECharts | null = null;
-  volumeChart: echarts.ECharts | null = null;
+  
 
   dashboardService: DashboardService = inject(DashboardService);
 
-  overviewKeys: (keyof Overview)[] = [
-    'totalWorkflowsToday',
-    'avgCycleTimeHours',
-    'slaCompliancePercent',
-    'activeAnomaliesCount',
-  ];
-  anomalySeverity: typeof AnomalySeverity = AnomalySeverity;
+  anomalySeverity = AnomalySeverity;
 
   constructor() {
     // Bind service signals to component reactively
     effect(() => this.overview.set(this.dashboardService.overview()));
     effect(() => {
       this.timeline.set(this.dashboardService.timeline());
-      this.updateTimelineChart();
-      this.updateVolumeChart();
     });
     effect(() => {
       const data = this.dashboardService.anomalies();
@@ -57,7 +50,7 @@ export class Dashboard implements OnInit, OnDestroy {
 
       if (this.activeFilters.size > 0) {
         const filtered: Anomaly[] = data.filter((a: Anomaly) => !this.activeFilters.has(a.severity));
-        this.anomalies.set(filtered);
+      this.anomalies.set(filtered);
       } else {
         this.anomalies.set(data);
       }
@@ -73,10 +66,8 @@ export class Dashboard implements OnInit, OnDestroy {
 
     // Connect SSE only if liveUpdates is true
     if (this.liveUpdates()) this.dashboardService.connectSSE();
-
-    this.timelineChart = echarts.init(document.getElementById('timelineChart') as HTMLDivElement);
-    this.anomalyChart = echarts.init(document.getElementById('anomalyChart') as HTMLDivElement);
-    this.volumeChart = echarts.init(document.getElementById('volumeChart') as HTMLDivElement);
+     this.anomalyChart = echarts.init(document.getElementById('anomalyChart') as HTMLDivElement);
+    
   }
 
   ngOnDestroy(): void {
@@ -96,40 +87,7 @@ export class Dashboard implements OnInit, OnDestroy {
       this.dashboardService.disconnectSSE();
     }
   }
-
-  getOverviewKeyLabel(key: keyof Overview): string {
-    const labels: Record<keyof Overview, string> = {
-      totalWorkflowsToday: 'Total Workflows Today',
-      avgCycleTimeHours: 'Avg. Cycle Time (Hours)',
-      slaCompliancePercent: 'SLA Compliance (%)',
-      activeAnomaliesCount: 'Active Anomalies',
-    };
-    return labels[key] || key;
-  }
-  private updateTimelineChart(): void {
-    if (!this.timelineChart) return;
-
-    const data: {
-      value: (number | TimelineEventType)[];
-      itemStyle: {
-        color: string;
-      };
-    }[] = this.timeline().map((e: TimelineEvent) => ({
-      value: [e.timestamp, e.type],
-      itemStyle: {
-        color:
-          e.type === TimelineEventType.Completed ? 'green' : e.type === TimelineEventType.Pending ? 'yellow' : 'red',
-      },
-    }));
-
-    this.timelineChart.setOption({
-      xAxis: { type: 'time' },
-      yAxis: { type: 'category', data: Object.values(TimelineEventType) },
-      series: [{ type: 'scatter', data }],
-    });
-  }
-
-  private updateAnomalyChart(): void {
+   private updateAnomalyChart(): void {
     if (!this.anomalyChart) return;
 
     const hours: number[] = Array.from({ length: 24 }, (_: unknown, i: number) => i);
@@ -154,23 +112,8 @@ export class Dashboard implements OnInit, OnDestroy {
     });
   }
 
-  private updateVolumeChart(): void {
-    if (!this.volumeChart) return;
-
-    const hours: number[] = Array.from({ length: 24 }, (_: unknown, i: number) => i);
-    const counts: number[] = hours.map(
-      (h: number) => this.timeline().filter((e: TimelineEvent) => new Date(e.timestamp).getHours() === h).length
-    );
-
-    this.volumeChart.setOption({
-      xAxis: { type: 'category', data: hours },
-      yAxis: { type: 'value' },
-      series: [{ type: 'bar', data: counts }],
-    });
-  }
-
   filterAnomaliesBySeverity(severity: AnomalySeverity, checked: boolean): void {
-    if (checked) {
+     if (checked) {
       this.activeFilters.delete(severity);
     } else {
       this.activeFilters.add(severity);
