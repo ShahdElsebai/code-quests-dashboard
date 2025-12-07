@@ -10,6 +10,8 @@ import * as echarts from 'echarts';
 })
 export class VolumeChartComponent implements AfterViewChecked {
   private _timeline: WritableSignal<TimelineEvent[]> = signal<TimelineEvent[]>([]);
+  private _hoursRange: number = 24;
+
   @Input() set timeline(value: TimelineEvent[]) {
     this._timeline.set(value);
     this.updateVolumeChart();
@@ -26,14 +28,27 @@ export class VolumeChartComponent implements AfterViewChecked {
       this.updateVolumeChart();
     }
   }
+
+  setTimeRange(hours: number): void {
+    this._hoursRange = hours;
+    this.updateVolumeChart();
+  }
+
   updateVolumeChart(): void {
     if (!this.volumeChart) return;
-    const hours: number[] = Array.from({ length: 24 }, (_: unknown, i: number) => i);
+
+    const now: Date = new Date();
+    const hours: number[] = Array.from({ length: this._hoursRange }, (_, i) => now.getHours() - this._hoursRange + i + 1);
     const counts: number[] = hours.map(
-      (h: number) => this._timeline().filter((e: TimelineEvent) => new Date(e.timestamp).getHours() === h).length
+      (h: number) =>
+        this._timeline().filter(
+          (e: TimelineEvent) => new Date(e.timestamp).getHours() === ((h + 24) % 24)
+        ).length
     );
+
     this.volumeChart.setOption({
-      xAxis: { type: 'category', data: hours },
+      tooltip: { trigger: 'axis' },
+      xAxis: { type: 'category', data: hours.map((h) => `${h}:00`) },
       yAxis: { type: 'value' },
       series: [{ type: 'bar', data: counts }],
     });

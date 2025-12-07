@@ -49,6 +49,12 @@ export class AnomalyHeatmapComponent implements OnChanges, AfterViewInit {
   initChart(): void {
     if (!this.anomalyChart && this.anomalyChartContainer) {
       this.anomalyChart = echarts.init(this.anomalyChartContainer.nativeElement);
+      this.anomalyChart.on('click', (params) => {
+        const anomaly = this.anomalies()?.[params.dataIndex];
+        if (anomaly) {
+          alert(`Anomaly Details:\nID: ${anomaly.id}\nType: ${anomaly.type}\nSeverity: ${anomaly.severity}`);
+        }
+      });
     }
   }
 
@@ -62,6 +68,13 @@ export class AnomalyHeatmapComponent implements OnChanges, AfterViewInit {
       return [hour, severityIndex, 1];
     });
     this.anomalyChart.setOption({
+      tooltip: {
+        formatter: (params: any) => {
+          const hour: number = params.value[0];
+          const severity: AnomalySeverity = severityLevels[params.value[1]];
+          return `Hour: ${hour}<br>Severity: ${severity}`;
+        },
+      },
       xAxis: { type: 'category', data: hours },
       yAxis: { type: 'category', data: severityLevels },
       visualMap: [

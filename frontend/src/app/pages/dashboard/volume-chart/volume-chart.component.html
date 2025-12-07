@@ -1,5 +1,10 @@
 <div class="card mb-2 p-3">
   <h5>Workflow Volume Chart</h5>
+  <div class="mb-2">
+    <button class="btn btn-sm btn-outline-primary me-1" (click)="setTimeRange(6)">Last 6h</button>
+    <button class="btn btn-sm btn-outline-primary me-1" (click)="setTimeRange(12)">Last 12h</button>
+    <button class="btn btn-sm btn-outline-primary me-1" (click)="setTimeRange(24)">Last 24h</button>
+  </div>
   @if (timelineSignal().length > 0) {
     <div id="volumeChart" class="chart"></div>
   }
