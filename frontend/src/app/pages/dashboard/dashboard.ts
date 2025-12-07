@@ -10,10 +10,10 @@ import {
 } from '@angular/core';
 import { Anomaly, AnomalySeverity, Overview, TimelineEvent, TimelineEventType } from './dashboard.model';
 import { DashboardService } from '../../core/services/dashboard/dashboard.service';
-import { OverviewComponent } from './overview/overview.component';
-import { TimelineChartComponent } from './timeline-chart/timeline-chart.component';
-import { VolumeChartComponent } from './volume-chart/volume-chart.component';
-import { AnomalyHeatmapComponent } from './anomaly-heatmap/anomaly-heatmap.component';
+import { OverviewComponent } from './components/overview/overview.component';
+import { TimelineChartComponent } from './components/timeline-chart/timeline-chart.component';
+import { VolumeChartComponent } from './components/volume-chart/volume-chart.component';
+import { AnomalyHeatmapComponent } from './components/anomaly-heatmap/anomaly-heatmap.component';
 @Component({
   selector: 'app-dashboard',
   imports: [OverviewComponent, TimelineChartComponent, VolumeChartComponent, AnomalyHeatmapComponent],

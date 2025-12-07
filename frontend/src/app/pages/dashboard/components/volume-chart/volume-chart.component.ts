@@ -1,5 +1,5 @@
 import { Component, Input, signal, WritableSignal, AfterViewChecked, ChangeDetectionStrategy } from '@angular/core';
-import { TimelineEvent } from '../dashboard.model';
+import { TimelineEvent } from '../../dashboard.model';
 import * as echarts from 'echarts';
 
 @Component({

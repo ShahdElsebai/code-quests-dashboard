@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, input, InputSignal } from '@angular/core';
-import { Overview } from '../dashboard.model';
+import { Overview } from '../../dashboard.model';
 
 @Component({
   selector: 'app-overview',

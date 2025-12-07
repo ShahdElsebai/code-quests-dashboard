@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { AnomalyHeatmapComponent } from './anomaly-heatmap.component';
-import { Anomaly, AnomalySeverity, AnomalyType } from '../dashboard.model';
+import { Anomaly, AnomalySeverity, AnomalyType } from '../../dashboard.model';
 import * as echarts from 'echarts';
 import { signal } from '@angular/core';
 

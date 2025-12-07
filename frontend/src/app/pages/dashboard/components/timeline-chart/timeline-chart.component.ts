@@ -11,7 +11,7 @@ import {
   ViewChild,
   ElementRef,
 } from '@angular/core';
-import { TimelineEvent, TimelineEventType, AnomalySeverity } from '../dashboard.model';
+import { TimelineEvent, TimelineEventType, AnomalySeverity } from '../../dashboard.model';
 import * as echarts from 'echarts';
 import { TitleCasePipe } from '@angular/common';
 

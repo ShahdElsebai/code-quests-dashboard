@@ -1,7 +1,7 @@
 import { describe, it, beforeEach, expect, vi } from 'vitest';
 import { VolumeChartComponent } from './volume-chart.component';
 import { signal, WritableSignal } from '@angular/core';
-import { TimelineEvent, TimelineEventType } from '../dashboard.model';
+import { TimelineEvent, TimelineEventType } from '../../dashboard.model';
 
 const mockTimeline: TimelineEvent[] = [
   { id: 1, type: TimelineEventType.Anomaly, timestamp: new Date().toISOString() },

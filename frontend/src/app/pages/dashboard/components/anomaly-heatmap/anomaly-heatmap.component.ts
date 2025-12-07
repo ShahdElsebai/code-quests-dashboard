@@ -11,7 +11,7 @@ import {
   input,
   InputSignal,
 } from '@angular/core';
-import { Anomaly, AnomalySeverity, TimelineEventType } from '../dashboard.model';
+import { Anomaly, AnomalySeverity, TimelineEventType } from '../../dashboard.model';
 import * as echarts from 'echarts';
 import { TitleCasePipe } from '@angular/common';
 

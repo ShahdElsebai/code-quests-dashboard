@@ -1,7 +1,7 @@
 import { describe, it, beforeEach, expect, vi } from 'vitest';
 import { TestBed } from '@angular/core/testing';
 import { TimelineChartComponent } from './timeline-chart.component';
-import { TimelineEvent, TimelineEventType } from '../dashboard.model';
+import { TimelineEvent, TimelineEventType } from '../../dashboard.model';
 import { signal } from '@angular/core';
 
 const mockTimeline: TimelineEvent[] = [

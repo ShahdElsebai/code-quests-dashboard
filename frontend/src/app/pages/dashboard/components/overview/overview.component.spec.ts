@@ -2,7 +2,7 @@ import { describe, it, beforeEach, expect } from 'vitest';
 import { TestBed } from '@angular/core/testing';
 import { OverviewComponent } from './overview.component';
 import { signal, WritableSignal } from '@angular/core';
-import { Overview } from '../dashboard.model';
+import { Overview } from '../../dashboard.model';
 
 const mockOverview: Overview = {
   activeAnomaliesCount: 10,
