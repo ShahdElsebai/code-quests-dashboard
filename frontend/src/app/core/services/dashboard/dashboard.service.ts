@@ -20,33 +20,42 @@ export class DashboardService {
   private destroyRef: DestroyRef = inject(DestroyRef);
 
   getOverview(): void {
-    this.http.get<Overview>(`${this.baseUrl}/stats/overview`).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
-      next: (o: Overview) => this.overview.set(o),
-      error: (err: Error) => {
-        this.toastr.error(err.message, 'Overview Fetch Error');
-        this.overview.set(null);
-      },
-    });
+    this.http
+      .get<Overview>(`${this.baseUrl}/stats/overview`)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (o: Overview) => this.overview.set(o),
+        error: (err: Error) => {
+          this.toastr.error(err.message, 'Overview Fetch Error');
+          this.overview.set(null);
+        },
+      });
   }
 
   getTimeline(): void {
-    this.http.get<TimelineEvent[]>(`${this.baseUrl}/stats/timeline`).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
-      next: (t: TimelineEvent[]) => this.timeline.set(t),
-      error: (err: Error) => {
-        this.toastr.error(err.message, 'Timeline Fetch Error');
-        this.timeline.set([]);
-      },
-    });
+    this.http
+      .get<TimelineEvent[]>(`${this.baseUrl}/stats/timeline`)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (t: TimelineEvent[]) => this.timeline.set(t),
+        error: (err: Error) => {
+          this.toastr.error(err.message, 'Timeline Fetch Error');
+          this.timeline.set([]);
+        },
+      });
   }
 
   getAnomalies(): void {
-    this.http.get<Anomaly[]>(`${this.baseUrl}/stats/anomalies`).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
-      next: (a: Anomaly[]) => this.anomalies.set(a),
-      error: (err: Error) => {
-        this.toastr.error(err.message, 'Anomalies Fetch Error');
-        this.anomalies.set([]);
-      },
-    });
+    this.http
+      .get<Anomaly[]>(`${this.baseUrl}/stats/anomalies`)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (a: Anomaly[]) => this.anomalies.set(a),
+        error: (err: Error) => {
+          this.toastr.error(err.message, 'Anomalies Fetch Error');
+          this.anomalies.set([]);
+        },
+      });
   }
 
   connectSSE(): void {

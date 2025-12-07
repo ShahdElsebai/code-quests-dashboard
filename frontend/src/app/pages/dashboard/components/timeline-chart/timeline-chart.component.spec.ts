@@ -22,7 +22,10 @@ describe('TimelineChartComponent', () => {
 
     (component as any).timeline = signal(mockTimeline);
 
-    component.timelineChart = { setOption: vi.fn() } as any;
+    component.timelineChart = {
+      setOption: vi.fn(),
+      dispatchAction: vi.fn(), 
+    } as any; 
   });
 
   it('should create component', () => {
@@ -32,5 +35,6 @@ describe('TimelineChartComponent', () => {
   it('should update chart', () => {
     component.updateTimelineChart();
     expect(component.timelineChart?.setOption).toHaveBeenCalled();
+    expect(component.timelineChart?.dispatchAction).toHaveBeenCalled(); 
   });
 });
