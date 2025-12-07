@@ -38,17 +38,18 @@ export class VolumeChartComponent implements AfterViewChecked {
     if (!this.volumeChart) return;
 
     const now: Date = new Date();
-    const hours: number[] = Array.from({ length: this._hoursRange }, (_, i) => now.getHours() - this._hoursRange + i + 1);
+    const hours: number[] = Array.from(
+      { length: this._hoursRange },
+      (_: unknown, i: number) => now.getHours() - this._hoursRange + i + 1
+    );
     const counts: number[] = hours.map(
       (h: number) =>
-        this._timeline().filter(
-          (e: TimelineEvent) => new Date(e.timestamp).getHours() === ((h + 24) % 24)
-        ).length
+        this._timeline().filter((e: TimelineEvent) => new Date(e.timestamp).getHours() === (h + 24) % 24).length
     );
 
     this.volumeChart.setOption({
       tooltip: { trigger: 'axis' },
-      xAxis: { type: 'category', data: hours.map((h) => `${h}:00`) },
+      xAxis: { type: 'category', data: hours.map((h: number) => `${h}:00`) },
       yAxis: { type: 'value' },
       series: [{ type: 'bar', data: counts }],
     });

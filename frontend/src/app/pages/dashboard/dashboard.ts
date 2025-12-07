@@ -28,7 +28,7 @@ export class Dashboard implements OnInit, OnDestroy {
   darkMode: WritableSignal<boolean> = signal(false);
   liveUpdates: WritableSignal<boolean> = signal(true);
   originalAnomalies: Anomaly[] = [];
-  activeFilters: Set<AnomalySeverity | TimelineEventType> = new Set();
+  activeFilters: Set<AnomalySeverity | TimelineEventType> = new Set<AnomalySeverity | TimelineEventType>();
 
   dashboardService: DashboardService = inject(DashboardService);
 
@@ -92,15 +92,15 @@ export class Dashboard implements OnInit, OnDestroy {
     this.anomalies.set(filtered);
   }
 
-  filterTimeline(type: TimelineEventType, checked: boolean) {
+  filterTimeline(type: TimelineEventType, checked: boolean): void {
     if (checked) {
       this.activeFilters.delete(type);
     } else {
       this.activeFilters.add(type);
     }
-    const filtered = this.dashboardService.timeline().filter(
-      (e) => !this.activeFilters.has(e.type)
-    );
+    const filtered: TimelineEvent[] = this.dashboardService
+      .timeline()
+      .filter((e: TimelineEvent) => !this.activeFilters.has(e.type));
     this.timeline.set(filtered);
   }
 }

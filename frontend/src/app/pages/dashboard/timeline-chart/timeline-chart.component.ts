@@ -25,13 +25,14 @@ import { TitleCasePipe } from '@angular/common';
 })
 export class TimelineChartComponent implements AfterViewInit, OnChanges {
   timeline: InputSignal<TimelineEvent[]> = input.required<TimelineEvent[]>();
-  activeFilters: InputSignal<Set<AnomalySeverity | TimelineEventType> | undefined> = input<
-    Set<AnomalySeverity | TimelineEventType>
-  >();
+  activeFilters: InputSignal<Set<AnomalySeverity | TimelineEventType> | undefined> =
+    input<Set<AnomalySeverity | TimelineEventType>>();
   timeLineEvent: typeof TimelineEventType = TimelineEventType;
 
-  @Output() filterChange: EventEmitter<{ timeline: TimelineEventType; checked: boolean }> =
-    new EventEmitter<{ timeline: TimelineEventType; checked: boolean }>();
+  @Output() filterChange: EventEmitter<{ timeline: TimelineEventType; checked: boolean }> = new EventEmitter<{
+    timeline: TimelineEventType;
+    checked: boolean;
+  }>();
 
   @ViewChild('timelineChartContainer', { static: false }) timelineChartContainer!: ElementRef<HTMLDivElement>;
   timelineChart: echarts.ECharts | null = null;
@@ -56,20 +57,14 @@ export class TimelineChartComponent implements AfterViewInit, OnChanges {
   updateTimelineChart(): void {
     if (!this.timelineChart) return;
 
-    const filters = this.activeFilters() ?? new Set<TimelineEventType>();
-    const data: { value: [number, TimelineEventType]; itemStyle: { color: string } }[] = (
-      this.timeline() ?? []
-    )
-      .filter((e) => !filters.has(e.type))
-      .map((e) => ({
+    const filters: Set<AnomalySeverity | TimelineEventType> = this.activeFilters() ?? new Set<TimelineEventType>();
+    const data: { value: [number, TimelineEventType]; itemStyle: { color: string } }[] = (this.timeline() ?? [])
+      .filter((e: TimelineEvent) => !filters.has(e.type))
+      .map((e: TimelineEvent) => ({
         value: [new Date(e.timestamp).getTime(), e.type],
         itemStyle: {
           color:
-            e.type === TimelineEventType.Completed
-              ? 'green'
-              : e.type === TimelineEventType.Pending
-              ? 'yellow'
-              : 'red',
+            e.type === TimelineEventType.Completed ? 'green' : e.type === TimelineEventType.Pending ? 'yellow' : 'red',
         },
       }));
 
@@ -77,7 +72,7 @@ export class TimelineChartComponent implements AfterViewInit, OnChanges {
       tooltip: {
         trigger: 'item',
         formatter: (params: any) => {
-          const date = new Date(params.value[0]);
+          const date: Date = new Date(params.value[0]);
           return `Time: ${date.toLocaleTimeString()}<br/>Type: ${params.value[1]}`;
         },
       },

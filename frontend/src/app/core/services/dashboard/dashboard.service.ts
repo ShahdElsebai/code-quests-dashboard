@@ -3,7 +3,7 @@ import { Anomaly, Overview, TimelineEvent, TimelineEventType } from '../../../pa
 import { environment } from '../../../../environments/environments';
 import { HttpClient } from '@angular/common/http';
 import { ToastrService } from 'ngx-toastr';
-import { Observable } from 'rxjs';
+import { Observable, Subscriber } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
 export class DashboardService {
@@ -19,7 +19,7 @@ export class DashboardService {
   private http: HttpClient = inject(HttpClient);
 
   private simulateError<T>(obs$: Observable<T>): Observable<T> {
-    return new Observable((subscriber) => {
+    return new Observable((subscriber: Subscriber<T>) => {
       if (Math.random() < 0.05) {
         subscriber.error('Simulated backend error');
       } else {
@@ -31,21 +31,21 @@ export class DashboardService {
   getOverview(): void {
     this.simulateError(this.http.get<Overview>(`${this.baseUrl}/stats/overview`)).subscribe({
       next: (o: Overview) => this.overview.set(o),
-      error: (err) => this.toastr.error(err, 'Overview Fetch Error'),
+      error: (err: Error) => this.toastr.error(err.message, 'Overview Fetch Error'),
     });
   }
 
   getTimeline(): void {
     this.simulateError(this.http.get<TimelineEvent[]>(`${this.baseUrl}/stats/timeline`)).subscribe({
       next: (t: TimelineEvent[]) => this.timeline.set(t),
-      error: (err) => this.toastr.error(err, 'Timeline Fetch Error'),
+      error: (err: Error) => this.toastr.error(err.message, 'Timeline Fetch Error'),
     });
   }
 
   getAnomalies(): void {
     this.simulateError(this.http.get<Anomaly[]>(`${this.baseUrl}/stats/anomalies`)).subscribe({
       next: (a: Anomaly[]) => this.anomalies.set(a),
-      error: (err) => this.toastr.error(err, 'Anomalies Fetch Error'),
+      error: (err: Error) => this.toastr.error(err.message, 'Anomalies Fetch Error'),
     });
   }
 

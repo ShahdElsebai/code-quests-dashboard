@@ -25,7 +25,8 @@ import { TitleCasePipe } from '@angular/common';
 })
 export class AnomalyHeatmapComponent implements OnChanges, AfterViewInit {
   anomalies: InputSignal<Anomaly[] | undefined> = input<Anomaly[]>();
-  activeFilters: InputSignal<Set<AnomalySeverity | TimelineEventType> | undefined> = input<Set<AnomalySeverity | TimelineEventType>>();
+  activeFilters: InputSignal<Set<AnomalySeverity | TimelineEventType> | undefined> =
+    input<Set<AnomalySeverity | TimelineEventType>>();
   anomalySeverity: typeof AnomalySeverity = AnomalySeverity;
   @Output() filterChange: EventEmitter<{
     severity: AnomalySeverity;
@@ -49,8 +50,8 @@ export class AnomalyHeatmapComponent implements OnChanges, AfterViewInit {
   initChart(): void {
     if (!this.anomalyChart && this.anomalyChartContainer) {
       this.anomalyChart = echarts.init(this.anomalyChartContainer.nativeElement);
-      this.anomalyChart.on('click', (params) => {
-        const anomaly = this.anomalies()?.[params.dataIndex];
+      this.anomalyChart.on('click', (params: echarts.ECElementEvent) => {
+        const anomaly: Anomaly | undefined = this.anomalies()?.[params.dataIndex];
         if (anomaly) {
           alert(`Anomaly Details:\nID: ${anomaly.id}\nType: ${anomaly.type}\nSeverity: ${anomaly.severity}`);
         }
