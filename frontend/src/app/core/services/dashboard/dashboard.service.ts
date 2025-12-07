@@ -3,6 +3,7 @@ import { Anomaly, Overview, TimelineEvent, TimelineEventType } from '../../../pa
 import { environment } from '../../../../environments/environments';
 import { HttpClient } from '@angular/common/http';
 import { ToastrService } from 'ngx-toastr';
+import { Observable } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
 export class DashboardService {
@@ -17,18 +18,35 @@ export class DashboardService {
   private toastr: ToastrService = inject(ToastrService);
   private http: HttpClient = inject(HttpClient);
 
+  private simulateError<T>(obs$: Observable<T>): Observable<T> {
+    return new Observable((subscriber) => {
+      if (Math.random() < 0.05) {
+        subscriber.error('Simulated backend error');
+      } else {
+        obs$.subscribe(subscriber);
+      }
+    });
+  }
+
   getOverview(): void {
-    this.http.get<Overview>(`${this.baseUrl}/stats/overview`).subscribe((o: Overview) => this.overview.set(o));
+    this.simulateError(this.http.get<Overview>(`${this.baseUrl}/stats/overview`)).subscribe({
+      next: (o: Overview) => this.overview.set(o),
+      error: (err) => this.toastr.error(err, 'Overview Fetch Error'),
+    });
   }
 
   getTimeline(): void {
-    this.http
-      .get<TimelineEvent[]>(`${this.baseUrl}/stats/timeline`)
-      .subscribe((t: TimelineEvent[]) => this.timeline.set(t));
+    this.simulateError(this.http.get<TimelineEvent[]>(`${this.baseUrl}/stats/timeline`)).subscribe({
+      next: (t: TimelineEvent[]) => this.timeline.set(t),
+      error: (err) => this.toastr.error(err, 'Timeline Fetch Error'),
+    });
   }
 
   getAnomalies(): void {
-    this.http.get<Anomaly[]>(`${this.baseUrl}/stats/anomalies`).subscribe((a: Anomaly[]) => this.anomalies.set(a));
+    this.simulateError(this.http.get<Anomaly[]>(`${this.baseUrl}/stats/anomalies`)).subscribe({
+      next: (a: Anomaly[]) => this.anomalies.set(a),
+      error: (err) => this.toastr.error(err, 'Anomalies Fetch Error'),
+    });
   }
 
   connectSSE(): void {
@@ -52,7 +70,7 @@ export class DashboardService {
       this.eventSource.onerror = (): void => {
         console.error('SSE connection error. Reconnecting in 2s...');
         this.disconnectSSE();
-        setTimeout(connect, 2000); // Retry after 2 seconds
+        setTimeout(connect, 2000);
       };
     };
 

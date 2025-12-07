@@ -28,7 +28,7 @@ export class Dashboard implements OnInit, OnDestroy {
   darkMode: WritableSignal<boolean> = signal(false);
   liveUpdates: WritableSignal<boolean> = signal(true);
   originalAnomalies: Anomaly[] = [];
-  activeFilters: Set<AnomalySeverity | TimelineEventType> = new Set<AnomalySeverity | TimelineEventType>();
+  activeFilters: Set<AnomalySeverity | TimelineEventType> = new Set();
 
   dashboardService: DashboardService = inject(DashboardService);
 
@@ -52,11 +52,8 @@ export class Dashboard implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.dashboardService.getOverview();
-    this.dashboardService.getTimeline();
-    this.dashboardService.getAnomalies();
+    this.refreshAll();
 
-    // Connect SSE only if liveUpdates is true
     if (this.liveUpdates()) this.dashboardService.connectSSE();
   }
 
@@ -78,6 +75,12 @@ export class Dashboard implements OnInit, OnDestroy {
     }
   }
 
+  refreshAll(): void {
+    this.dashboardService.getOverview();
+    this.dashboardService.getTimeline();
+    this.dashboardService.getAnomalies();
+  }
+
   filterAnomaliesBySeverity(severity: AnomalySeverity, checked: boolean): void {
     if (checked) {
       this.activeFilters.delete(severity);
@@ -88,7 +91,7 @@ export class Dashboard implements OnInit, OnDestroy {
     const filtered: Anomaly[] = this.originalAnomalies.filter((a: Anomaly) => !this.activeFilters.has(a.severity));
     this.anomalies.set(filtered);
   }
-  // dashboard.ts
+
   filterTimeline(type: TimelineEventType, checked: boolean) {
     if (checked) {
       this.activeFilters.delete(type);
@@ -100,5 +103,4 @@ export class Dashboard implements OnInit, OnDestroy {
     );
     this.timeline.set(filtered);
   }
-
 }

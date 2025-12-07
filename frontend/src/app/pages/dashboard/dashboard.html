@@ -9,20 +9,26 @@
           Dark Mode
         }
       </button>
-      <button class="btn btn-success" (click)="toggleLiveUpdates()">
+      <button class="btn btn-success me-2" (click)="toggleLiveUpdates()">
         @if (liveUpdates()) {
           Pause Updates
         } @else {
           Resume Updates
         }
       </button>
+      <button class="btn btn-secondary" (click)="refreshAll()">Refresh All</button>
     </div>
   </div>
 
   <!-- Overview Cards -->
   <app-overview [overview]="overview()"></app-overview>
+
   <!-- Timeline Chart -->
-  <app-timeline-chart [timeline]="timeline()" [activeFilters]="activeFilters" (filterChange)="filterTimeline($event.timeline, $event.checked)"></app-timeline-chart>
+  <app-timeline-chart
+    [timeline]="timeline()"
+    [activeFilters]="activeFilters"
+    (filterChange)="filterTimeline($event.timeline, $event.checked)"
+  ></app-timeline-chart>
 
   <!-- Anomaly Heatmap -->
   <app-anomaly-heatmap
