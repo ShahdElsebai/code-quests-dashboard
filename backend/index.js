@@ -114,7 +114,6 @@ app.get('/api/events/stream', (req, res) => {
   const interval = setInterval(sendEvent, 5000);
 
   req.on('close', () => clearInterval(interval));
-  // Do NOT call res.end()
 });
 
 // ---- SSE broadcaster: emit random event every 10-20 seconds ----
@@ -129,7 +128,6 @@ function emitEventToClients(event) {
   });
 }
 
-// schedule randomized intervals between 10-20s
 function scheduleNextEmit() {
   const ms = Math.floor(Math.random() * (20000 - 10000 + 1)) + 10000;
   setTimeout(() => {
@@ -138,12 +136,13 @@ function scheduleNextEmit() {
     scheduleNextEmit();
   }, ms);
 }
+
 // start broadcasting loop
 scheduleNextEmit();
 
 app.get("/", (req, res) => {
   res.send(
-    "<h3>Legal Dashboard Mock API</h3><p>Swagger UI: <a href='/docs'>/docs</a></p><p>SSE stream: /events/stream</p>"
+    "<h3>Legal Dashboard Mock API</h3><p>Swagger UI: <a href='/docs'>/docs</a></p><p>SSE stream: /api/events/stream</p>"
   );
 });
 
