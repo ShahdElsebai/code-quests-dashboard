@@ -1,6 +1,13 @@
 <div class="card mb-2 p-3">
   <h5>Real-Time Event Timeline</h5>
-  @if (timeline().length > 0) {
-    <div id="timelineChart" class="chart"></div>
-  }
+  <div #timelineChartContainer class="chart"></div>
+
+  <div class="mt-1">
+    @for (s of [timeLineEvent.Completed, timeLineEvent.Pending, timeLineEvent.Anomaly]; track s) {
+      <label class="me-3">
+        <input type="checkbox" (change)="onFilterChange(s, $event.target.checked)" checked />
+        {{ s | titlecase }}
+      </label>
+    }
+  </div>
 </div>

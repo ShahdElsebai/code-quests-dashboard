@@ -11,7 +11,7 @@ import {
   input,
   InputSignal,
 } from '@angular/core';
-import { Anomaly, AnomalySeverity } from '../dashboard.model';
+import { Anomaly, AnomalySeverity, TimelineEventType } from '../dashboard.model';
 import * as echarts from 'echarts';
 import { TitleCasePipe } from '@angular/common';
 
@@ -25,7 +25,7 @@ import { TitleCasePipe } from '@angular/common';
 })
 export class AnomalyHeatmapComponent implements OnChanges, AfterViewInit {
   anomalies: InputSignal<Anomaly[] | undefined> = input<Anomaly[]>();
-  activeFilters: InputSignal<Set<AnomalySeverity> | undefined> = input<Set<AnomalySeverity>>();
+  activeFilters: InputSignal<Set<AnomalySeverity | TimelineEventType> | undefined> = input<Set<AnomalySeverity | TimelineEventType>>();
   anomalySeverity: typeof AnomalySeverity = AnomalySeverity;
   @Output() filterChange: EventEmitter<{
     severity: AnomalySeverity;

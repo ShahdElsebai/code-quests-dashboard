@@ -8,7 +8,7 @@ import {
   effect,
   ChangeDetectionStrategy,
 } from '@angular/core';
-import { Anomaly, AnomalySeverity, Overview, TimelineEvent } from './dashboard.model';
+import { Anomaly, AnomalySeverity, Overview, TimelineEvent, TimelineEventType } from './dashboard.model';
 import { DashboardService } from '../../core/services/dashboard/dashboard.service';
 import { OverviewComponent } from './overview/overview.component';
 import { TimelineChartComponent } from './timeline-chart/timeline-chart.component';
@@ -28,7 +28,7 @@ export class Dashboard implements OnInit, OnDestroy {
   darkMode: WritableSignal<boolean> = signal(false);
   liveUpdates: WritableSignal<boolean> = signal(true);
   originalAnomalies: Anomaly[] = [];
-  activeFilters: Set<AnomalySeverity> = new Set<AnomalySeverity>();
+  activeFilters: Set<AnomalySeverity | TimelineEventType> = new Set<AnomalySeverity | TimelineEventType>();
 
   dashboardService: DashboardService = inject(DashboardService);
 
@@ -88,4 +88,17 @@ export class Dashboard implements OnInit, OnDestroy {
     const filtered: Anomaly[] = this.originalAnomalies.filter((a: Anomaly) => !this.activeFilters.has(a.severity));
     this.anomalies.set(filtered);
   }
+  // dashboard.ts
+  filterTimeline(type: TimelineEventType, checked: boolean) {
+    if (checked) {
+      this.activeFilters.delete(type);
+    } else {
+      this.activeFilters.add(type);
+    }
+    const filtered = this.dashboardService.timeline().filter(
+      (e) => !this.activeFilters.has(e.type)
+    );
+    this.timeline.set(filtered);
+  }
+
 }

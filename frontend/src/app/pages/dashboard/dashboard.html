@@ -22,7 +22,7 @@
   <!-- Overview Cards -->
   <app-overview [overview]="overview()"></app-overview>
   <!-- Timeline Chart -->
-  <app-timeline-chart [timeline]="timeline()"></app-timeline-chart>
+  <app-timeline-chart [timeline]="timeline()" [activeFilters]="activeFilters" (filterChange)="filterTimeline($event.timeline, $event.checked)"></app-timeline-chart>
 
   <!-- Anomaly Heatmap -->
   <app-anomaly-heatmap
