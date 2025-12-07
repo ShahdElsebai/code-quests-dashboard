@@ -12,10 +12,10 @@ export const appConfig: ApplicationConfig = {
     provideRouter(routes),
     provideAnimations(),
     provideToastr({
-      timeOut: 3000,
-      positionClass: 'toast-bottom-right-fixed',
+       timeOut: 3000,
+      positionClass: 'toast-bottom-right',
       preventDuplicates: true,
-      progressBar: true,
+      progressBar: true
     }),
   ],
 };
