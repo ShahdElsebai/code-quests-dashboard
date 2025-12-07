@@ -23,7 +23,6 @@
       "prettier --write"
     ]
   },
-
   "private": true,
   "packageManager": "npm@11.6.0",
   "dependencies": {
@@ -38,6 +37,7 @@
     "@angular/platform-browser-dynamic": "^21.0.3",
     "@angular/router": "^21.0.3",
     "bootstrap": "^5.3.8",
+    "bootstrap-icons": "^1.13.1",
     "echarts": "^6.0.0",
     "ngx-echarts": "^20.0.2",
     "ngx-toastr": "^19.1.0",
@@ -66,7 +66,6 @@
     "prettier": "^3.7.4",
     "typescript": "~5.9.2",
     "vitest": "^4.0.8",
-       "typescript-eslint": "^8.48.1"
-
+    "typescript-eslint": "^8.48.1"
   }
 }

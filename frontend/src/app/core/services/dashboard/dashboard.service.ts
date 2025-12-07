@@ -17,16 +17,13 @@ export class DashboardService {
   private toastr: ToastrService = inject(ToastrService);
   private http: HttpClient = inject(HttpClient);
 
-
-
   getOverview(): void {
     this.http.get<Overview>(`${this.baseUrl}/stats/overview`).subscribe({
       next: (o: Overview) => this.overview.set(o),
       error: (err: Error) => {
-        this.toastr.error(err.message, 'Overview Fetch Error')
-        this.overview.set(null)
-
-      }
+        this.toastr.error(err.message, 'Overview Fetch Error');
+        this.overview.set(null);
+      },
     });
   }
 
@@ -34,9 +31,9 @@ export class DashboardService {
     this.http.get<TimelineEvent[]>(`${this.baseUrl}/stats/timeline`).subscribe({
       next: (t: TimelineEvent[]) => this.timeline.set(t),
       error: (err: Error) => {
-        this.toastr.error(err.message, 'Timeline Fetch Error')
-        this.timeline.set([])
-      }
+        this.toastr.error(err.message, 'Timeline Fetch Error');
+        this.timeline.set([]);
+      },
     });
   }
 
@@ -44,8 +41,8 @@ export class DashboardService {
     this.http.get<Anomaly[]>(`${this.baseUrl}/stats/anomalies`).subscribe({
       next: (a: Anomaly[]) => this.anomalies.set(a),
       error: (err: Error) => {
-        this.toastr.error(err.message, 'Anomalies Fetch Error')
-        this.anomalies.set([])
+        this.toastr.error(err.message, 'Anomalies Fetch Error');
+        this.anomalies.set([]);
       },
     });
   }
